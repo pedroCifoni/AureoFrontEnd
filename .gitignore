@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Notas locais
+caminhoBack.md
+FRONTEND_MUDANCAS.md
+estilizacao.md
