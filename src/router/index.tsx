@@ -6,6 +6,7 @@ import { PublicRoute } from '@/router/PublicRoute';
 import { DashboardPage } from '@/pages/Dashboard';
 import { TransacoesPage } from '@/pages/Transacoes';
 import { MetasPage } from '@/pages/Metas';
+import { HomePage } from '@/pages/Home';
 import { LoginPage } from '@/pages/Login';
 import { CreateAccountPage } from '@/pages/Login/form';
 import { NovaTransacaoPage } from '@/pages/NovaTransacao';
@@ -17,6 +18,7 @@ export const router = createBrowserRouter([
       {
         element: <AuthLayout />,
         children: [
+          { path: '/', element: <HomePage /> },
           { path: '/login', element: <LoginPage /> },
           { path: '/criar-conta', element: <CreateAccountPage /> },
         ],
@@ -38,6 +40,5 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  { path: '/', element: <Navigate to="/dashboard" replace /> },
   { path: '*', element: <Navigate to="/dashboard" replace /> },
 ]);
