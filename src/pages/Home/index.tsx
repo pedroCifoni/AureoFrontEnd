@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Coins,
@@ -64,9 +65,37 @@ const sampleBars = [
   [88, 50],
 ];
 
+const navLinks = [
+  { id: 'recursos', label: 'Recursos' },
+  { id: 'como-funciona', label: 'Como funciona' },
+];
+
 export const HomePage = () => {
+  const [ativo, setAtivo] = useState<string | null>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setAtivo(e.target.id);
+        });
+      },
+      { rootMargin: '-40% 0px -50% 0px' }
+    );
+    navLinks.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const irPara = (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <div className="relative min-h-screen bg-base text-text-primary overflow-x-hidden">
+    <div className="relative min-h-screen bg-base text-text-primary overflow-x-clip">
       {/* Fundo decorativo */}
       <div
         aria-hidden
@@ -85,7 +114,7 @@ export const HomePage = () => {
       />
 
       {/* Navbar */}
-      <header className="sticky top-0 z-30 border-b border-border/60 bg-base/80 backdrop-blur-md">
+      <header className="sticky top-0 z-30 border-b border-border/60 bg-base/70 backdrop-blur-xl shadow-[0_1px_0_rgba(201,168,76,0.08)]">
         <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto] items-center gap-6 px-6 md:grid-cols-[1fr_auto_1fr]">
           <Link to="/" className="flex items-center gap-2.5 justify-self-start">
             <div className="flex h-9 w-9 items-center justify-center rounded-card border border-gold/30 bg-gold/10">
@@ -94,19 +123,21 @@ export const HomePage = () => {
             <span className="text-lg font-bold tracking-tight">Aureo</span>
           </Link>
 
-          <nav className="hidden items-center gap-1 rounded-full border border-border bg-surface/70 p-1 md:flex">
-            <a
-              href="#recursos"
-              className="rounded-full px-5 py-1.5 text-sm font-medium text-text-secondary transition-colors hover:bg-elevated hover:text-gold"
-            >
-              Recursos
-            </a>
-            <a
-              href="#como-funciona"
-              className="rounded-full px-5 py-1.5 text-sm font-medium text-text-secondary transition-colors hover:bg-elevated hover:text-gold"
-            >
-              Como funciona
-            </a>
+          <nav className="hidden items-center gap-1 rounded-full border border-border bg-surface/80 p-1 shadow-card md:flex">
+            {navLinks.map((l) => (
+              <a
+                key={l.id}
+                href={`#${l.id}`}
+                onClick={(e) => irPara(e, l.id)}
+                className={`rounded-full px-5 py-1.5 text-sm font-medium transition-all duration-200 ${
+                  ativo === l.id
+                    ? 'bg-gold/15 text-gold shadow-[inset_0_0_0_1px_rgba(201,168,76,0.35)]'
+                    : 'text-text-secondary hover:bg-elevated hover:text-text-primary'
+                }`}
+              >
+                {l.label}
+              </a>
+            ))}
           </nav>
 
           <div className="flex items-center gap-3 justify-self-end">
@@ -252,7 +283,7 @@ export const HomePage = () => {
               <div className="flex h-11 w-11 items-center justify-center rounded-card border border-gold/30 bg-gold/10">
                 <f.icon size={20} className="text-gold" />
               </div>
-              <h3 className="text-base font-semibold leading-snug">{f.title}</h3>
+              <h3 className="text-base font-semibold leading-snug text-white">{f.title}</h3>
               <p className="text-sm leading-relaxed text-text-secondary">{f.text}</p>
             </Card>
           ))}
@@ -284,7 +315,7 @@ export const HomePage = () => {
               <span className="flex h-12 w-12 items-center justify-center rounded-full border border-gold/40 bg-base font-mono text-lg font-bold text-gold shadow-glow">
                 {s.n}
               </span>
-              <h3 className="mt-5 text-base font-semibold">{s.title}</h3>
+              <h3 className="mt-5 text-base font-semibold text-white">{s.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-text-secondary">{s.text}</p>
             </div>
           ))}
