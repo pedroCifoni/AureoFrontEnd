@@ -85,34 +85,38 @@ export const HomePage = () => {
       />
 
       {/* Navbar */}
-      <header className="relative z-10 border-b border-border/60 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-card border border-gold/20 bg-gold/10">
-              <Coins size={16} className="text-gold" />
+      <header className="sticky top-0 z-30 border-b border-border/60 bg-base/80 backdrop-blur-md">
+        <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto] items-center gap-6 px-6 md:grid-cols-[1fr_auto_1fr]">
+          <Link to="/" className="flex items-center gap-2.5 justify-self-start">
+            <div className="flex h-9 w-9 items-center justify-center rounded-card border border-gold/30 bg-gold/10">
+              <Coins size={18} className="text-gold" />
             </div>
-            <span className="font-bold tracking-tight">Aureo</span>
+            <span className="text-lg font-bold tracking-tight">Aureo</span>
           </Link>
-          <nav className="flex items-center gap-3">
+
+          <nav className="hidden items-center gap-1 rounded-full border border-border bg-surface/70 p-1 md:flex">
             <a
               href="#recursos"
-              className="hidden text-sm font-medium text-text-secondary transition-colors hover:text-text-primary sm:block"
+              className="rounded-full px-5 py-1.5 text-sm font-medium text-text-secondary transition-colors hover:bg-elevated hover:text-gold"
             >
               Recursos
             </a>
             <a
               href="#como-funciona"
-              className="hidden text-sm font-medium text-text-secondary transition-colors hover:text-text-primary sm:block"
+              className="rounded-full px-5 py-1.5 text-sm font-medium text-text-secondary transition-colors hover:bg-elevated hover:text-gold"
             >
               Como funciona
             </a>
+          </nav>
+
+          <div className="flex items-center gap-3 justify-self-end">
             <Link to="/login">
               <Button variant="secondary">Entrar</Button>
             </Link>
             <Link to="/criar-conta" className="hidden sm:block">
               <Button>Criar conta</Button>
             </Link>
-          </nav>
+          </div>
         </div>
       </header>
 
@@ -161,7 +165,7 @@ export const HomePage = () => {
               <span className="h-2.5 w-2.5 rounded-full bg-danger/70" />
               <span className="h-2.5 w-2.5 rounded-full bg-warning/70" />
               <span className="h-2.5 w-2.5 rounded-full bg-success/70" />
-              <span className="ml-3 text-xs text-text-muted">Dashboard</span>
+              <span className="ml-3 text-xs text-text-secondary">Dashboard</span>
             </div>
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -171,7 +175,7 @@ export const HomePage = () => {
                 { label: 'Despesas', value: 1813.4, icon: <TrendingDown size={14} /> },
               ].map((k) => (
                 <div key={k.label} className="rounded-button border border-border bg-elevated p-4">
-                  <div className="flex items-center justify-between text-text-muted">
+                  <div className="flex items-center justify-between text-text-secondary">
                     <span className="text-[10px] font-medium uppercase tracking-widest">{k.label}</span>
                     <span className="text-gold">{k.icon}</span>
                   </div>
@@ -207,7 +211,7 @@ export const HomePage = () => {
                         </span>
                         <div>
                           <p className="text-xs font-medium">{r.desc}</p>
-                          <p className="text-[10px] text-text-muted">{r.cat}</p>
+                          <p className="text-[10px] text-text-secondary">{r.cat}</p>
                         </div>
                       </div>
                       <span
@@ -222,29 +226,34 @@ export const HomePage = () => {
               </div>
             </div>
           </Card>
-          <p className="mt-3 text-center text-xs text-text-muted">Exemplo ilustrativo com dados fictícios.</p>
+          <p className="mt-3 text-center text-xs text-text-secondary">Exemplo ilustrativo com dados fictícios.</p>
         </div>
       </section>
 
       {/* Recursos */}
       <section id="recursos" className="relative z-10 mx-auto max-w-6xl scroll-mt-20 px-6 py-20">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-medium uppercase tracking-widest text-gold">Recursos</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">
+          <Badge className="border-gold/30 bg-gold/10 text-gold">Recursos</Badge>
+          <h2 className="mt-4 text-3xl font-bold tracking-tight md:text-4xl">
             Tudo o que você precisa para enxergar o seu dinheiro
           </h2>
+          <p className="mt-3 text-text-secondary">
+            Ferramentas simples, pensadas para dar clareza ao seu dia a dia financeiro.
+          </p>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((f) => (
-            <Card key={f.title} hoverable className="flex gap-4 p-6">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-card border border-gold/20 bg-gold/10">
-                <f.icon size={18} className="text-gold" />
+            <Card
+              key={f.title}
+              hoverable
+              className="flex flex-col items-start gap-4 p-6 transition-transform duration-200 hover:-translate-y-1"
+            >
+              <div className="flex h-11 w-11 items-center justify-center rounded-card border border-gold/30 bg-gold/10">
+                <f.icon size={20} className="text-gold" />
               </div>
-              <div>
-                <h3 className="text-base font-semibold">{f.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-text-secondary">{f.text}</p>
-              </div>
+              <h3 className="text-base font-semibold leading-snug">{f.title}</h3>
+              <p className="text-sm leading-relaxed text-text-secondary">{f.text}</p>
             </Card>
           ))}
         </div>
@@ -253,18 +262,30 @@ export const HomePage = () => {
       {/* Como funciona */}
       <section id="como-funciona" className="relative z-10 mx-auto max-w-6xl scroll-mt-20 px-6 py-20">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-medium uppercase tracking-widest text-gold">Como funciona</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">
+          <Badge className="border-gold/30 bg-gold/10 text-gold">Como funciona</Badge>
+          <h2 className="mt-4 text-3xl font-bold tracking-tight md:text-4xl">
             Do cadastro ao controle em três passos
           </h2>
+          <p className="mt-3 text-text-secondary">
+            Em poucos minutos você sai do zero e tem uma visão completa das suas finanças.
+          </p>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="relative mt-14 grid grid-cols-1 gap-5 md:grid-cols-3">
+          <div
+            aria-hidden
+            className="absolute left-[16%] right-[16%] top-[52px] hidden h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent md:block"
+          />
           {steps.map((s) => (
-            <div key={s.n} className="rounded-card border border-border bg-surface/60 p-6">
-              <span className="font-mono text-3xl font-bold text-gold/70">{s.n}</span>
-              <h3 className="mt-4 text-base font-semibold">{s.title}</h3>
-              <p className="mt-1.5 text-sm text-text-secondary">{s.text}</p>
+            <div
+              key={s.n}
+              className="relative flex flex-col items-center rounded-card border border-border bg-surface p-7 text-center shadow-card"
+            >
+              <span className="flex h-12 w-12 items-center justify-center rounded-full border border-gold/40 bg-base font-mono text-lg font-bold text-gold shadow-glow">
+                {s.n}
+              </span>
+              <h3 className="mt-5 text-base font-semibold">{s.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-text-secondary">{s.text}</p>
             </div>
           ))}
         </div>
@@ -296,7 +317,7 @@ export const HomePage = () => {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-border/60">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-6 text-xs text-text-muted sm:flex-row">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-6 text-xs text-text-secondary sm:flex-row">
           <div className="flex items-center gap-2">
             <Coins size={14} className="text-gold" />
             <span className="font-semibold text-text-secondary">Aureo</span>
