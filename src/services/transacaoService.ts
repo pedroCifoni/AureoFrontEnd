@@ -1,13 +1,20 @@
 import { api } from "./api";
 import type {
   CreateTransacaoRequest,
+  UpdateTransacaoRequest,
+  ListarTransacoesParams,
+  PagedResult,
   TransacaoResponse
 } from "@/models/transacao";
 
 export const transacaoService = {
 
-  getAll: async (): Promise<TransacaoResponse[]> => {
-    const response = await api.get<TransacaoResponse[]>('/api/transacoes');
+  list: async (params: ListarTransacoesParams = {}): Promise<PagedResult<TransacaoResponse>> => {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== '') query.set(key, String(value));
+    });
+    const response = await api.get<PagedResult<TransacaoResponse>>(`/api/transacoes?${query}`);
     return response.data;
   },
 
@@ -18,6 +25,11 @@ export const transacaoService = {
 
   create: async (data: CreateTransacaoRequest): Promise<TransacaoResponse> => {
     const response = await api.post<TransacaoResponse>('/api/transacoes', data);
+    return response.data;
+  },
+
+  update: async (id: string, data: UpdateTransacaoRequest): Promise<TransacaoResponse> => {
+    const response = await api.put<TransacaoResponse>(`/api/transacoes/${id}`, data);
     return response.data;
   },
 

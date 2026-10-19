@@ -17,3 +17,26 @@ export interface CreateTransacaoRequest {
   tipo: TipoTransacao;
   data: string;
 }
+
+// PUT /api/transacoes/{id}: substituição completa, mesmo corpo do POST
+export type UpdateTransacaoRequest = CreateTransacaoRequest;
+
+export interface PagedResult<T> {
+  itens: T[];
+  pagina: number;
+  tamanho: number;
+  total: number;
+  totalPaginas: number;
+}
+
+export interface ListarTransacoesParams {
+  dataInicio?: string;
+  dataFim?: string;
+  tipo?: TipoTransacao;
+  categoria?: string;
+  busca?: string;
+  ordenarPor?: 'Data' | 'Valor';
+  decrescente?: boolean;
+  pagina?: number;
+  tamanho?: number;
+}

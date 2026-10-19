@@ -32,6 +32,7 @@ export const router = createBrowserRouter([
           { path: '/dashboard', element: <DashboardPage /> },
           { path: '/transacoes', element: <TransacoesPage /> },
           { path: '/transacoes/nova', element: <NovaTransacaoPage /> },
+          { path: '/transacoes/:id/editar', element: <NovaTransacaoPage /> },
           { path: '/metas', element: <MetasPage /> },
         ],
       },

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -11,14 +11,37 @@ import { getErrorMessage } from '@/utils/errors';
 
 export const NovaTransacaoPage = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const isEdit = !!id;
   const [loading, setLoading] = useState(false);
+  const [loadingItem, setLoadingItem] = useState(isEdit);
   const [formData, setFormData] = useState<CreateTransacaoRequest>({
     descricao: '',
     categoria: '',
     valor: 0,
     tipo: 1,
-    data: new Date().toISOString().split('T')[0],
+    data: new Date().toLocaleDateString('en-CA'),
   });
+
+  useEffect(() => {
+    if (!id) return;
+    transacaoService
+      .getById(id)
+      .then((t) =>
+        setFormData({
+          descricao: t.descricao,
+          categoria: t.categoria,
+          valor: Math.abs(t.valor),
+          tipo: t.tipo,
+          data: new Date(t.data).toLocaleDateString('en-CA'),
+        })
+      )
+      .catch((error) => {
+        toast.error(getErrorMessage(error, 'Transação não encontrada.'));
+        navigate('/transacoes', { replace: true });
+      })
+      .finally(() => setLoadingItem(false));
+  }, [id, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -44,14 +67,16 @@ export const NovaTransacaoPage = () => {
     }
     try {
       setLoading(true);
-      await transacaoService.create({
+      const body = {
         ...formData,
         data: new Date(`${formData.data}T12:00:00`).toISOString(),
-      });
+      };
+      if (id) await transacaoService.update(id, body);
+      else await transacaoService.create(body);
       toast.success('Transação salva com sucesso!');
       navigate('/transacoes');
-    } catch (error: any) {
-      console.error('Erro detalhado:', error.response?.data || error);
+    } catch (error) {
+      console.error('Erro detalhado:', error);
       toast.error(getErrorMessage(error, 'Falha ao salvar transação.'));
     } finally {
       setLoading(false);
@@ -65,9 +90,14 @@ export const NovaTransacaoPage = () => {
         <Button variant="secondary" onClick={() => navigate('/transacoes')} className="px-3">
           <ArrowLeft size={20} />
         </Button>
-        <h1 className="text-3xl font-bold tracking-tight text-text-primary">Nova Transação</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-text-primary">
+          {isEdit ? 'Editar Transação' : 'Nova Transação'}
+        </h1>
       </div>
 
+      {loadingItem ? (
+        <div className="py-4 text-center text-sm text-text-muted">Carregando...</div>
+      ) : (
       <Card>
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <Input
@@ -143,6 +173,7 @@ export const NovaTransacaoPage = () => {
           </div>
         </form>
       </Card>
+      )}
     </div>
   );
 };

@@ -20,7 +20,9 @@ export const DashboardPage = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        setItems(await transacaoService.getAll());
+        // Paliativo: sem endpoint de resumo, usa a maior página (100) para os agregados.
+        const data = await transacaoService.list({ tamanho: 100 });
+        setItems(data.itens);
       } catch (error) {
         console.error(error);
         toast.error(getErrorMessage(error, 'Erro ao carregar o dashboard.'));
