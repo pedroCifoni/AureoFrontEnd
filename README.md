@@ -1,73 +1,69 @@
-# React + TypeScript + Vite
+# Aureo Front-end
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interface web do **Aureo**, plataforma de organização financeira pessoal. Consome a [Aureo API](https://github.com/pedroCifoni/AureoBackEnd).
 
-Currently, two official plugins are available:
+**[Ver online](https://aureo-front-end.vercel.app)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+- **React 19** + **TypeScript**
+- **Vite**
+- **Tailwind CSS 4**
+- **React Router** (rotas e layouts)
+- **Axios** (cliente HTTP)
+- **Sonner** (notificações) e **Lucide** (ícones)
+- **ESLint** com `typescript-eslint`
+- Deploy na **Vercel**
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Telas
 
-## Expanding the ESLint configuration
+| Tela | Descrição |
+|---|---|
+| `Login` | Autenticação do usuário |
+| `Home` | Página inicial |
+| `Dashboard` | Visão geral das finanças |
+| `Transacoes` | Listagem das receitas e despesas |
+| `NovaTransacao` | Cadastro de transação |
+| `Metas` | Metas financeiras |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Estrutura
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+  components/ui/  componentes reutilizáveis
+  layouts/        estrutura compartilhada das páginas
+  pages/          telas
+  router/         definição das rotas
+  services/       acesso à API (`api.ts`, `authService.ts`, `transacaoService.ts`)
+  hooks/          hooks customizados
+  models/         tipos e contratos
+  utils/          funções auxiliares
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+As páginas conversam com a API apenas por meio da camada `services`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Como rodar
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Pré-requisitos: Node.js e a [Aureo API](https://github.com/pedroCifoni/AureoBackEnd) em execução.
+
+```bash
+git clone https://github.com/pedroCifoni/AureoFrontEnd.git
+cd AureoFrontEnd
+npm install
+npm run dev
 ```
+
+O cliente HTTP fica em `src/services/api.ts`. Ajuste lá a URL base da API, se necessário.
+
+### Scripts
+
+| Comando | O que faz |
+|---|---|
+| `npm run dev` | Servidor de desenvolvimento |
+| `npm run build` | Checagem de tipos e build de produção |
+| `npm run lint` | Análise estática com ESLint |
+| `npm run preview` | Pré-visualiza o build |
+
+## Autor
+
+Pedro Cifoni · [LinkedIn](https://www.linkedin.com/in/pedro-cifoni-montezuma/)
