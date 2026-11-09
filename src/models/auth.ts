@@ -1,7 +1,10 @@
+export type Papel = 'Usuario' | 'Admin';
+
 export interface Usuario {
   id?: string;
   nome: string;
   email: string;
+  papel?: Papel;
 }
 
 // ---------------- LOGIN ----------------
@@ -15,6 +18,7 @@ export interface LoginRequest {
 export interface LoginResponse {
   nome: string;
   email: string;
+  papel: Papel;
   token: string;
 }
 

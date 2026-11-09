@@ -1,29 +1,30 @@
 import { api } from "./api";
-import type { 
-  LoginRequest, 
-  LoginResponse, 
-  CreateUsuarioRequest, 
-  CreateUsuarioResponse 
+import type {
+  LoginRequest,
+  LoginResponse,
+  CreateUsuarioRequest,
+  CreateUsuarioResponse
 } from "@/models/auth";
 
 export const authService = {
-  
+
   login: async (data: LoginRequest): Promise<void> => {
     const response = await api.post<LoginResponse>('/api/usuarios/login', data);
-    
-    
+
+
     const token = response.data.token;
     const nome = response.data.nome;
     const email = response.data.email;
+    const papel = response.data.papel;
 
     if (!token) {
       throw new Error('Resposta de login sem token.');
     }
     localStorage.setItem('aureo_token', token);
-    localStorage.setItem('aureo_user', JSON.stringify({ nome, email }));
-  }, 
+    localStorage.setItem('aureo_user', JSON.stringify({ nome, email, papel }));
+  },
 
-  
+
   register: async (data: CreateUsuarioRequest): Promise<void> => {
     await api.post<CreateUsuarioResponse>('/api/usuarios', data);
   },

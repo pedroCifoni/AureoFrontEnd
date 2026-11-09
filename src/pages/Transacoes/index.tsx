@@ -6,6 +6,8 @@ import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { TransactionRow } from '../Dashboard/components/TransactionRow';
 import { transacaoService } from '@/services/transacaoService';
+import { categoriaService } from '@/services/categoriaService';
+import type { CategoriaResponse } from '@/models/categoria';
 import type { PagedResult, TransacaoResponse, ListarTransacoesParams } from '@/models/transacao';
 import { toTransaction } from '@/utils/transacao';
 import { getErrorMessage } from '@/utils/errors';
@@ -33,8 +35,8 @@ export const TransacoesPage = () => {
   const [busca, setBusca] = useState('');
   const [buscaDebounced, setBuscaDebounced] = useState('');
   const [tipo, setTipo] = useState<'' | '0' | '1'>('');
-  const [categoria, setCategoria] = useState('');
-  const [categoriaDebounced, setCategoriaDebounced] = useState('');
+  const [categoriaId, setCategoriaId] = useState('');
+  const [categorias, setCategorias] = useState<CategoriaResponse[]>([]);
   const [mes, setMes] = useState('');
   const [ordenarPor, setOrdenarPor] = useState<'Data' | 'Valor'>('Data');
   const [decrescente, setDecrescente] = useState(true);
@@ -43,15 +45,18 @@ export const TransacoesPage = () => {
   useEffect(() => {
     const t = setTimeout(() => {
       setBuscaDebounced(busca.trim());
-      setCategoriaDebounced(categoria.trim());
       setPagina(1);
     }, 400);
     return () => clearTimeout(t);
-  }, [busca, categoria]);
+  }, [busca]);
+
+  useEffect(() => {
+    categoriaService.list().then(setCategorias).catch(() => setCategorias([]));
+  }, []);
 
   const params: ListarTransacoesParams = {
     busca: buscaDebounced,
-    categoria: categoriaDebounced,
+    categoriaId: categoriaId || undefined,
     tipo: tipo === '' ? undefined : (Number(tipo) as 0 | 1),
     ...(mes ? intervaloDoMes(mes) : {}),
     ordenarPor,
@@ -126,13 +131,21 @@ export const TransacoesPage = () => {
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
           />
-          <Input
-            label="Categoria"
-            placeholder="Ex: Alimentação"
-            maxLength={100}
-            value={categoria}
-            onChange={(e) => setCategoria(e.target.value)}
-          />
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-medium uppercase tracking-widest text-text-muted">Categoria</label>
+            <select
+              value={categoriaId}
+              onChange={(e) => mudaFiltro(setCategoriaId)(e.target.value)}
+              className={selectClass}
+            >
+              <option value="">Todas</option>
+              {categorias.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome} ({c.tipo === 0 ? 'Receita' : 'Despesa'})
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium uppercase tracking-widest text-text-muted">Tipo</label>
             <select

@@ -4,8 +4,11 @@ import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { transacaoService } from '@/services/transacaoService';
+import { categoriaService } from '@/services/categoriaService';
 import type { CreateTransacaoRequest } from '@/models/transacao';
+import type { CategoriaResponse } from '@/models/categoria';
 import { ArrowLeft, Save } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { getErrorMessage } from '@/utils/errors';
 
@@ -15,13 +18,21 @@ export const NovaTransacaoPage = () => {
   const isEdit = !!id;
   const [loading, setLoading] = useState(false);
   const [loadingItem, setLoadingItem] = useState(isEdit);
+  const [categorias, setCategorias] = useState<CategoriaResponse[]>([]);
   const [formData, setFormData] = useState<CreateTransacaoRequest>({
     descricao: '',
-    categoria: '',
+    categoriaId: '',
     valor: 0,
     tipo: 1,
     data: new Date().toLocaleDateString('en-CA'),
   });
+
+  useEffect(() => {
+    categoriaService
+      .list()
+      .then(setCategorias)
+      .catch((error) => toast.error(getErrorMessage(error, 'Erro ao carregar categorias.')));
+  }, []);
 
   useEffect(() => {
     if (!id) return;
@@ -30,7 +41,7 @@ export const NovaTransacaoPage = () => {
       .then((t) =>
         setFormData({
           descricao: t.descricao,
-          categoria: t.categoria,
+          categoriaId: t.categoriaId,
           valor: Math.abs(t.valor),
           tipo: t.tipo,
           data: new Date(t.data).toLocaleDateString('en-CA'),
@@ -48,8 +59,12 @@ export const NovaTransacaoPage = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: name === 'valor' || name === 'tipo' ? Number(value) : value,
+      // A categoria precisa ter o mesmo tipo da transação.
+      ...(name === 'tipo' ? { categoriaId: '' } : {}),
     }));
   };
+
+  const categoriasDoTipo = categorias.filter((c) => c.tipo === formData.tipo);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,8 +72,8 @@ export const NovaTransacaoPage = () => {
       toast.error('Descrição é obrigatória (até 200 caracteres).');
       return;
     }
-    if (!formData.categoria.trim() || formData.categoria.length > 100) {
-      toast.error('Categoria é obrigatória (até 100 caracteres).');
+    if (!formData.categoriaId) {
+      toast.error('Selecione uma categoria.');
       return;
     }
     if (!(formData.valor > 0)) {
@@ -133,14 +148,33 @@ export const NovaTransacaoPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Categoria"
-              name="categoria"
-              placeholder="Ex: Alimentação"
-              value={formData.categoria}
-              onChange={handleChange}
-              required
-            />
+            <div className="flex flex-col gap-1.5 flex-1">
+              <label className="text-xs font-medium uppercase tracking-widest text-text-muted">
+                Categoria
+              </label>
+              <select
+                name="categoriaId"
+                value={formData.categoriaId}
+                onChange={handleChange}
+                required
+                className="w-full bg-elevated border border-border rounded-button px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold transition-colors appearance-none"
+              >
+                <option value="">Selecione...</option>
+                {categoriasDoTipo.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nome}
+                  </option>
+                ))}
+              </select>
+              {categoriasDoTipo.length === 0 && (
+                <span className="text-xs text-text-muted">
+                  Nenhuma categoria deste tipo.{' '}
+                  <Link to="/categorias" className="text-gold hover:text-gold-muted">
+                    Criar categoria
+                  </Link>
+                </span>
+              )}
+            </div>
 
             <div className="flex flex-col gap-1.5 flex-1">
               <label className="text-xs font-medium uppercase tracking-widest text-text-muted">

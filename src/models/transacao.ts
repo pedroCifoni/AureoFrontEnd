@@ -4,7 +4,8 @@ export type TipoTransacao = 0 | 1;
 export interface TransacaoResponse {
   id: string;
   descricao: string;
-  categoria: string;
+  categoriaId: string;
+  categoria: string; // nome, só leitura
   valor: number;
   tipo: TipoTransacao;
   data: string;
@@ -12,7 +13,7 @@ export interface TransacaoResponse {
 
 export interface CreateTransacaoRequest {
   descricao: string;
-  categoria: string;
+  categoriaId: string;
   valor: number;
   tipo: TipoTransacao;
   data: string;
@@ -33,7 +34,7 @@ export interface ListarTransacoesParams {
   dataInicio?: string;
   dataFim?: string;
   tipo?: TipoTransacao;
-  categoria?: string;
+  categoriaId?: string;
   busca?: string;
   ordenarPor?: 'Data' | 'Valor';
   decrescente?: boolean;

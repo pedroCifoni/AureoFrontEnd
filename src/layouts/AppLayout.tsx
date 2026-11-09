@@ -1,10 +1,13 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import { LayoutDashboard, ArrowRightLeft, Target, LogOut, Coins } from 'lucide-react';
+import { LayoutDashboard, ArrowRightLeft, Target, LogOut, Coins, Tags, Users, ListChecks } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { Badge } from '@/components/ui/Badge';
 import {authService} from '@/services/authService';
 import { useNavigate } from 'react-router-dom';
 
 export const AppLayout = () => {
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
 
   const handleLogout = () => {
     authService.logout();
@@ -22,8 +25,21 @@ export const AppLayout = () => {
   const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { label: 'Transações', path: '/transacoes', icon: ArrowRightLeft },
+    { label: 'Categorias', path: '/categorias', icon: Tags },
     { label: 'Metas', path: '/metas', icon: Target },
   ];
+
+  const adminItems = [
+    { label: 'Usuários', path: '/admin/usuarios', icon: Users },
+    { label: 'Transações dos usuários', path: '/admin/transacoes', icon: ListChecks },
+  ];
+
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center gap-3 px-3 py-2 rounded-button text-sm font-medium transition-colors ${
+      isActive
+        ? 'bg-gold/10 text-gold border border-gold/20'
+        : 'text-text-secondary hover:bg-elevated hover:text-text-primary border border-transparent'
+    }`;
 
   return (
     <div className="flex min-h-screen bg-base">
@@ -40,21 +56,25 @@ export const AppLayout = () => {
         {/* Nav Links */}
         <nav className="flex-1 p-4 space-y-1">
           {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-button text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-gold/10 text-gold border border-gold/20'
-                    : 'text-text-secondary hover:bg-elevated hover:text-text-primary border border-transparent'
-                }`
-              }
-            >
+            <NavLink key={item.path} to={item.path} className={linkClass}>
               <item.icon size={16} />
               {item.label}
             </NavLink>
           ))}
+
+          {isAdmin && (
+            <>
+              <p className="px-3 pt-4 pb-1 text-xs font-medium uppercase tracking-widest text-text-muted">
+                Administração
+              </p>
+              {adminItems.map((item) => (
+                <NavLink key={item.path} to={item.path} className={linkClass}>
+                  <item.icon size={16} />
+                  {item.label}
+                </NavLink>
+              ))}
+            </>
+          )}
         </nav>
 
         {/* User Profile / Logout */}
@@ -75,6 +95,7 @@ export const AppLayout = () => {
         <header className="h-14 border-b border-border flex items-center justify-between px-6 bg-surface">
           <h2 className="text-sm font-medium text-text-secondary">Visão Geral</h2>
           <div className="flex items-center gap-3">
+            {isAdmin && <Badge variant="warning">Admin</Badge>}
             <div className="w-8 h-8 rounded-full bg-elevated flex items-center justify-center text-text-primary font-bold text-xs">
               {iniciais}
             </div>
