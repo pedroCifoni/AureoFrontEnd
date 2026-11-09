@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: 'https://localhost:44359',
-
+  // Em produção vem de VITE_API_URL (definida na Vercel); o fallback é a API local.
+  baseURL: import.meta.env.VITE_API_URL ?? 'https://localhost:44359',
 });
 
 api.interceptors.request.use((config) => {
